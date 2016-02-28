@@ -70,7 +70,7 @@ class BaseFileOps(object):
         min_size = entry.get('clean_source', config.get('clean_source', -1))
         if min_size < 0:
             return 
-        base_path = os.path.split(entry['location'])[0]
+        base_path = os.path.split(entry.get('old_location', entry['location']))[0]
         # everything here happens after a successful execution of the main action: the entry has been moved in a 
         # different location, or it does not exists anymore. so from here we can just log warnings and move on.
         if not os.path.isdir(base_path):
@@ -241,6 +241,8 @@ class TransformingOps(BaseFileOps):
                     self.log.info('`%s` has been %s to `%s` as well.' % (s, funct_done, d))
                 except Exception as err:
                     self.log.warning(str(err))
+        entry['old_location'] = src
+        entry['location'] = dst
         entry['output'] = dst
         if self.move and not src_isdir:
             self.clean_source(task, config, entry)

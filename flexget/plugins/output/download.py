@@ -406,6 +406,7 @@ class PluginDownload(object):
                 log.info('Would write `%s` to `%s`' % (entry['title'], path))
                 # Set a fake location, so the exec plugin can do string replacement during --test #1015
                 entry['output'] = os.path.join(path, 'TEST_MODE_NO_OUTPUT')
+                entry['location'] = os.path.join(path, 'TEST_MODE_NO_OUTPUT')
                 return
 
             # make path
@@ -473,6 +474,7 @@ class PluginDownload(object):
 
             # store final destination as output key
             entry['output'] = destfile
+            entry['location'] = destfile
 
         finally:
             self.cleanup_temp_file(entry)
