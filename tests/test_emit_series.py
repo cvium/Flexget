@@ -32,7 +32,7 @@ class TestEmitSeries(object):
             - Test Series 1:
                 tracking: backfill
                 identified_by: ep
-            rerun: 0
+            max_reruns: 0
           test_emit_series_no_backfill:
             emit_series: yes
             series:

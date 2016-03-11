@@ -178,7 +178,8 @@ class Task(object):
 
     """
 
-    max_reruns = 5
+    RERUN_DEFAULT = 5
+    RERUN_MAX = 100
     # Used to determine task order, when priority is the same
     _counter = itertools.count()
 
@@ -194,6 +195,7 @@ class Task(object):
             The default is 0, if the cron option is set though, the default is lowered to 10.
 
         """
+        self.max_reruns = Task.RERUN_DEFAULT
         self.name = unicode(name)
         self.id = ''.join(random.choice(string.digits) for _ in range(6))
         self.manager = manager
@@ -578,7 +580,7 @@ class Task(object):
             while True:
                 self._execute()
                 # rerun task
-                if self._rerun and self._rerun_count < self.max_reruns:
+                if self._rerun and self._rerun_count < self.max_reruns and self._rerun_count < Task.RERUN_MAX:
                     log.info('Rerunning the task in case better resolution can be achieved.')
                     self._rerun_count += 1
                     # TODO: Potential optimization is to take snapshots (maybe make the ones backlog uses built in

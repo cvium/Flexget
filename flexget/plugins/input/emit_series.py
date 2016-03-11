@@ -41,6 +41,7 @@ class EmitSeries(object):
 
     def __init__(self):
         self.rerun_entries = []
+        self.rerun = False
 
     def ep_identifiers(self, season, episode):
         return ['S%02dE%02d' % (season, episode),
@@ -186,6 +187,7 @@ class EmitSeries(object):
                                                             entry['series_season'],
                                                             entry['series_episode'] + 1,
                                                             task))
+                self.rerun = True
                 task.rerun()
             elif db_release:
                 # There are know releases of this episode, but none were accepted
@@ -197,6 +199,11 @@ class EmitSeries(object):
                 log.debug('%s %s not found, rerunning to look for next season' %
                           (entry['series_name'], entry['series_id']))
                 task.rerun()
+
+    @plugin.priority(255)
+    def on_task_exit(self, task, config):
+        if self.rerun:
+            task.max_reruns += 1
 
 
 @event('plugin.register')
